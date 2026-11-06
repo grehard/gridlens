@@ -1,0 +1,19 @@
+{
+  "slug": "gridlens",
+  "name": "Gridlens",
+  "category": "Data tools",
+  "accent": "#1f4fcc",
+  "tagline": "Open a CSV and get answers, without uploading anything",
+  "description": "For analysts, founders and anyone handed a CSV they cannot send to a third-party service. It profiles, filters, pivots and charts the file entirely inside the browser, with no spreadsheet and no upload.",
+  "scope": ["CSV parsing and type inference", "Profile, filter, pivot and chart", "Computed columns and saved views"],
+  "features": [
+    "RFC 4180 CSV parser with BOM handling and comma, semicolon and tab detection, run in a Web Worker with a main-thread fallback",
+    "Virtualised table that scrolls 100,000 rows, with column sort, resize and hide",
+    "Per-column profile with nulls, unique count, min, max, mean, median and a histogram or top values",
+    "Pivot with sum, average, count, min and max, plus AND filter conditions by type and text search",
+    "Bar, line, scatter and histogram charts drawn on canvas with axes, tooltips and PNG export",
+    "Computed columns in a small formula language, and saved views that persist in the browser"
+  ],
+  "stack": ["JavaScript", "Canvas", "SVG", "Web Workers", "localStorage"],
+  "engineering": "Computed columns are tokenized, parsed and type-checked by a hand-written Pratt parser and compiled to closures over column arrays, so formulas can never reach eval, Function or any JavaScript object."
+}

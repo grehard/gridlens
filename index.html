@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gridlens: private CSV explorer</title>
+  <meta name="description" content="Open a CSV and get answers in your browser: profile columns, filter, pivot, chart and export. Files never leave your device.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231f4fcc'/%3E%3Cpath d='M7 12h18M7 20h18M13 7v18M20 7v18' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/grid.css">
+  <link rel="stylesheet" href="css/panels.css">
+  <link rel="stylesheet" href="css/analysis.css">
+  <script>
+    // Applied before the first paint so a saved theme never flashes the other one.
+    try {
+      var savedTheme = localStorage.getItem('gridlens.theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch (error) { /* storage blocked: follow the system theme */ }
+  </script>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand" aria-label="Gridlens">
+        <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><rect width="20" height="20" rx="4" fill="var(--accent)"/><path d="M4 7.5h12M4 12.5h12M8 4v12M13 4v12" stroke="#fff" stroke-width="1.3"/></svg>
+        <span>Gridlens</span>
+      </div>
+      <div class="dataset" aria-live="polite">
+        <strong id="dataset-name" class="dataset-name">Loading</strong>
+        <span id="dataset-meta" class="dataset-meta"></span>
+      </div>
+      <p class="privacy" id="privacy"><span>Files never leave this browser. Nothing is uploaded.</span></p>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" type="button" id="open-file"><span>Open CSV</span></button>
+        <input class="sr-only" type="file" id="file-input" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain" tabindex="-1" aria-label="Choose a CSV file">
+        <button class="icon-btn icon-btn-framed" type="button" id="theme-toggle"></button>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <div class="workspace-tabs" id="workspace-tabs" role="tablist" aria-label="Workspace"></div>
+      <div class="search-box">
+        <span id="search-icon" class="search-icon"></span>
+        <input type="search" id="search" placeholder="Search visible columns" aria-label="Search visible columns" autocomplete="off">
+      </div>
+      <p class="row-count" id="row-count" aria-live="polite"></p>
+      <div class="toolbar-actions">
+        <button class="btn" type="button" id="save-view-btn"><span>Save view</span></button>
+        <button class="btn" type="button" id="export-btn"><span id="export-label">Export CSV</span></button>
+      </div>
+    </div>
+
+    <main class="main">
+      <section class="workspace" aria-label="Data">
+        <div class="busy" id="busy" hidden role="status"><span class="busy-bar"></span><span id="busy-text"></span></div>
+        <div class="tab-panel" id="tab-table" role="tabpanel" aria-labelledby="workspace-tab-table">
+          <div class="grid" id="grid" role="grid" tabindex="0" aria-label="Rows in view. Use the arrow keys to move between cells."></div>
+        </div>
+        <div class="tab-panel pivot-panel" id="tab-pivot" role="tabpanel" aria-labelledby="workspace-tab-pivot" hidden>
+          <div class="pivot-controls" id="pivot-controls"></div>
+          <p class="pivot-summary" id="pivot-summary" aria-live="polite"></p>
+          <div class="pivot-result" id="pivot-result"></div>
+        </div>
+        <div class="tab-panel chart-panel" id="tab-chart" role="tabpanel" aria-labelledby="workspace-tab-chart" hidden>
+          <div class="chart-controls" id="chart-controls"></div>
+          <div class="chart-canvas-holder" id="chart-canvas-holder">
+            <canvas id="chart-canvas" role="img" tabindex="0"></canvas>
+            <p class="empty-note" id="chart-message" hidden></p>
+            <div class="chart-tooltip" id="chart-tooltip" hidden></div>
+            <p class="sr-only" id="chart-live" aria-live="polite"></p>
+          </div>
+          <div class="chart-table" id="chart-table" hidden></div>
+        </div>
+      </section>
+
+      <aside class="inspector" id="inspector" aria-label="Inspector">
+        <div class="inspector-tabs" id="inspector-tabs" role="tablist" aria-label="Inspector sections"></div>
+        <div class="panel" id="panel-profile" role="tabpanel" aria-labelledby="inspector-tab-profile"></div>
+        <div class="panel" id="panel-filters" role="tabpanel" aria-labelledby="inspector-tab-filters" hidden></div>
+        <div class="panel" id="panel-columns" role="tabpanel" aria-labelledby="inspector-tab-columns" hidden></div>
+        <div class="panel" id="panel-views" role="tabpanel" aria-labelledby="inspector-tab-views" hidden></div>
+        <div class="panel" id="panel-data" role="tabpanel" aria-labelledby="inspector-tab-data" hidden></div>
+      </aside>
+    </main>
+
+    <footer class="statusbar">
+      <p id="status-parse" class="status-parse"></p>
+      <p id="status-cell" class="status-cell" aria-live="polite"></p>
+    </footer>
+  </div>
+
+  <div class="drop-overlay" id="drop-overlay" hidden>
+    <p>Drop a CSV to open it here. It stays in this browser.</p>
+  </div>
+  <div id="overlay-root"></div>
+  <div id="toast-root" class="toast-root"></div>
+
+  <script src="js/core/csv.js"></script>
+  <script src="js/core/types.js"></script>
+  <script src="js/core/parse-job.js"></script>
+  <script src="js/core/stats.js"></script>
+  <script src="js/core/filter.js"></script>
+  <script src="js/core/pivot.js"></script>
+  <script src="js/core/expr-parser.js"></script>
+  <script src="js/core/expr-functions.js"></script>
+  <script src="js/core/expr.js"></script>
+  <script src="js/core/samples.js"></script>
+  <script src="js/core/chart-data.js"></script>
+  <script src="js/ui/dom.js"></script>
+  <script src="js/ui/view-state.js"></script>
+  <script src="js/ui/store.js"></script>
+  <script src="js/ui/loader.js"></script>
+  <script src="js/ui/seeds.js"></script>
+  <script src="js/ui/model.js"></script>
+  <script src="js/ui/overlay.js"></script>
+  <script src="js/ui/panels-core.js"></script>
+  <script src="js/ui/table.js"></script>
+  <script src="js/ui/panel-profile.js"></script>
+  <script src="js/ui/panel-filters.js"></script>
+  <script src="js/ui/panel-columns.js"></script>
+  <script src="js/ui/panel-views.js"></script>
+  <script src="js/ui/panel-data.js"></script>
+  <script src="js/ui/pivot-view.js"></script>
+  <script src="js/ui/chart-draw.js"></script>
+  <script src="js/ui/chart-view.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

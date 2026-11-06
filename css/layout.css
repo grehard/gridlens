@@ -1,0 +1,151 @@
+/* Page frame: top bar, toolbar, workspace beside inspector, status bar, overlays. */
+.app {
+  display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto;
+  height: 100vh; height: 100dvh; min-width: 0;
+}
+
+.topbar {
+  display: flex; align-items: center; gap: 14px; min-height: 44px; padding: 6px 12px;
+  background: var(--surface); border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 7px; font-weight: 650; font-size: 15px; flex: none; }
+.dataset { display: flex; align-items: baseline; gap: 8px; min-width: 0; padding-left: 14px; border-left: 1px solid var(--line); }
+.dataset-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+.dataset-meta { color: var(--text-2); font-size: 13px; white-space: nowrap; }
+.privacy {
+  display: flex; align-items: center; gap: 6px; margin-left: auto; color: var(--success);
+  font-size: 13px; white-space: nowrap;
+}
+.topbar-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+
+.toolbar {
+  display: flex; align-items: center; gap: 12px; min-height: 42px; padding: 6px 12px;
+  background: var(--surface-2); border-bottom: 1px solid var(--line);
+}
+.workspace-tabs { display: flex; flex: none; border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden; }
+.workspace-tab {
+  display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px;
+  background: var(--surface); border: 0; border-right: 1px solid var(--line-strong); cursor: pointer;
+}
+.workspace-tab:last-child { border-right: 0; }
+.workspace-tab:hover { background: var(--surface-3); }
+.workspace-tab[aria-selected="true"] { background: var(--accent); color: var(--on-accent); font-weight: 500; }
+.workspace-tab:focus-visible { outline-offset: -2px; }
+.search-box { position: relative; flex: 0 1 280px; min-width: 120px; }
+.search-box input { width: 100%; height: 30px; padding-left: 28px; }
+.search-icon { position: absolute; left: 8px; top: 8px; color: var(--text-3); pointer-events: none; display: flex; }
+.row-count { color: var(--text-2); font-size: 13px; white-space: nowrap; }
+.toolbar-actions { display: flex; gap: 8px; margin-left: auto; flex: none; }
+
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 312px; min-height: 0; }
+.workspace { position: relative; min-width: 0; min-height: 0; background: var(--surface); }
+.tab-panel { position: absolute; inset: 0; min-height: 0; }
+
+.busy {
+  position: absolute; left: 50%; top: 12px; transform: translateX(-50%); z-index: 6;
+  display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 13px;
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius);
+}
+.busy-bar { width: 10px; height: 10px; background: var(--accent); border-radius: 2px; }
+
+.inspector {
+  display: flex; flex-direction: column; min-height: 0; background: var(--surface-2);
+  border-left: 1px solid var(--line);
+}
+.inspector-tabs { display: flex; flex: none; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.inspector-tab {
+  flex: 1 1 auto; height: 34px; padding: 0 4px; background: none; border: 0; border-bottom: 2px solid transparent;
+  color: var(--text-2); font-size: 13px; cursor: pointer; white-space: nowrap;
+}
+.inspector-tab:hover { color: var(--text); background: var(--surface-3); }
+.inspector-tab[aria-selected="true"] { color: var(--accent-ink); border-bottom-color: var(--accent); font-weight: 600; }
+.inspector-tab:focus-visible { outline-offset: -2px; }
+.tab-badge {
+  display: inline-block; min-width: 16px; margin-left: 4px; padding: 0 4px; border-radius: 3px;
+  background: var(--surface-3); color: var(--text-2); font-size: 11px; font-weight: 500; line-height: 16px; text-align: center;
+}
+.panel { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 10px 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.panel > * { flex: none; }
+
+.statusbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 24px; padding: 3px 12px;
+  background: var(--surface-2); border-top: 1px solid var(--line); color: var(--text-2); font-size: 12px;
+}
+.status-parse { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; }
+.status-cell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 45%; text-align: right; }
+
+.drop-overlay {
+  position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); border: 3px dashed var(--accent); font-size: 18px; font-weight: 500; color: var(--accent-ink);
+  pointer-events: none;
+}
+
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-start; justify-content: center; padding: 60px 16px 16px;
+  background: rgba(15, 18, 24, .45); overflow-y: auto;
+}
+.modal { width: 100%; max-width: 430px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 6px; }
+.modal-wide { max-width: 620px; }
+.modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.modal-head h2 { font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.modal-body { padding: 14px; }
+.modal-text { line-height: 1.5; }
+.modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line); }
+
+.menu {
+  position: fixed; z-index: 35; min-width: 190px; padding: 4px; background: var(--surface);
+  border: 1px solid var(--line-strong); border-radius: var(--radius); box-shadow: 0 4px 12px rgba(15, 18, 24, .16);
+}
+.menu-item {
+  display: flex; align-items: center; gap: 8px; width: 100%; height: 28px; padding: 0 8px; background: none; border: 0;
+  border-radius: 3px; text-align: left; font-size: 13px; cursor: pointer;
+}
+.menu-item:hover:not(:disabled), .menu-item:focus-visible { background: var(--accent-soft); outline: none; }
+.menu-item:disabled { color: var(--text-3); cursor: not-allowed; }
+.menu-sep { height: 1px; margin: 4px 0; background: var(--line); }
+
+.toast-root { position: fixed; left: 12px; bottom: 34px; z-index: 45; width: min(300px, calc(100vw - 24px)); pointer-events: none; }
+.toast {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 12px; pointer-events: auto;
+  background: var(--text); color: var(--surface); border-radius: var(--radius); font-size: 13px;
+}
+.toast-error { background: var(--danger); color: var(--surface); }
+.toast-text { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.toast-action { flex: none; padding: 2px 8px; background: none; border: 1px solid currentColor; border-radius: 3px; color: inherit; font-weight: 600; cursor: pointer; }
+.toast-close { color: inherit; width: 22px; height: 22px; }
+.toast-close:hover:not(:disabled) { background: transparent; color: inherit; opacity: .75; }
+
+@media (max-width: 1180px) {
+  .privacy span { font-size: 12px; }
+  .dataset-name { max-width: 170px; }
+}
+
+@media (max-width: 1040px) {
+  .topbar { flex-wrap: wrap; row-gap: 4px; }
+  .privacy { order: 5; flex-basis: 100%; margin-left: 0; }
+  .topbar-actions { margin-left: auto; }
+}
+
+/* Under this width the inspector stacks below the workspace and the page scrolls vertically. */
+@media (max-width: 900px) {
+  .app { display: block; height: auto; }
+  .main { display: block; }
+  .workspace { height: 62vh; min-height: 340px; }
+  .inspector { border-left: 0; border-top: 1px solid var(--line); }
+  .panel { overflow: visible; }
+  .toolbar { flex-wrap: wrap; gap: 8px; }
+  .search-box { flex: 1 1 100%; order: 3; }
+  .toolbar-actions { margin-left: auto; }
+  .statusbar { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .status-parse, .status-cell { white-space: normal; text-align: left; flex: none; max-width: 100%; }
+  .modal-backdrop { padding-top: 16px; }
+}
+
+@media (max-width: 520px) {
+  .dataset { padding-left: 0; border-left: 0; order: 4; flex: 1 1 100%; flex-wrap: wrap; column-gap: 8px; row-gap: 0; }
+  .dataset-name { max-width: 100%; }
+  .dataset-meta { white-space: normal; }
+  .privacy { white-space: normal; }
+  .row-count { flex: 1 1 100%; order: 4; }
+  .toolbar-actions { margin-left: 0; }
+}

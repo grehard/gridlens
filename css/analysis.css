@@ -1,0 +1,69 @@
+/* Pivot and chart workspaces. */
+.pivot-panel, .chart-panel { display: flex; flex-direction: column; }
+
+.pivot-controls, .chart-controls {
+  flex: none; display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: flex-end; padding: 8px 12px;
+  background: var(--surface-2); border-bottom: 1px solid var(--line);
+}
+.pivot-controls { flex-direction: column; align-items: stretch; }
+.pivot-dims { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: flex-end; }
+.pivot-dims select { min-width: 130px; max-width: 200px; }
+.pivot-measures { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.measures-title { font-size: 12px; color: var(--text-2); }
+.measure { display: inline-flex; align-items: center; gap: 4px; padding: 2px 2px 2px 3px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.measure select { height: 26px; border-color: transparent; background: transparent; max-width: 150px; }
+.measure select:hover { border-color: var(--line-strong); }
+.of-word { color: var(--text-2); font-size: 12px; }
+
+.pivot-summary { flex: none; padding: 5px 12px; color: var(--text-2); font-size: 12px; min-height: 26px; }
+.pivot-result { flex: 1 1 auto; min-height: 0; overflow: auto; border-top: 1px solid var(--line); }
+
+.pivot-table { border-collapse: separate; border-spacing: 0; font-size: 13px; min-width: 100%; }
+.pivot-table th, .pivot-table td { height: 26px; padding: 0 10px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); white-space: nowrap; text-align: left; font-weight: 400; }
+.pivot-table thead th { position: sticky; top: 0; z-index: 2; height: 30px; padding: 0; background: var(--surface-3); border-bottom-color: var(--line-strong); font-weight: 600; }
+.pivot-table tbody th { background: var(--surface); position: sticky; left: 0; z-index: 1; font-weight: 500; }
+.pivot-table .num { text-align: right; }
+.pivot-table tbody tr:hover td, .pivot-table tbody tr:hover th { background: var(--surface-2); }
+.pivot-table tfoot th, .pivot-table tfoot td {
+  position: sticky; bottom: 0; background: var(--surface-3); font-weight: 600; border-top: 1px solid var(--line-strong);
+}
+.th-btn { display: inline-flex; align-items: center; justify-content: inherit; gap: 4px; width: 100%; height: 29px; padding: 0 10px; background: none; border: 0; font-weight: 600; white-space: nowrap; cursor: pointer; }
+.pivot-table .num .th-btn { justify-content: flex-end; }
+.th-btn:hover { background: var(--line); }
+.th-btn:focus-visible { outline-offset: -2px; }
+
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden; }
+.seg-btn { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 7px; background: var(--surface); border: 0; border-right: 1px solid var(--line-strong); font-size: 13px; cursor: pointer; }
+.seg-btn:last-child { border-right: 0; }
+.seg-btn:hover { background: var(--surface-3); }
+.seg-btn[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+.seg-btn:focus-visible { outline-offset: -2px; }
+.chart-controls select { max-width: 124px; }
+.chart-controls input[type="number"] { width: 72px; }
+
+.chart-canvas-holder { position: relative; flex: 1 1 auto; min-height: 220px; overflow: hidden; background: var(--chart-surface); }
+#chart-canvas { display: block; position: absolute; left: 0; top: 0; touch-action: pan-y; outline-offset: -3px; }
+.chart-tooltip {
+  position: absolute; z-index: 4; max-width: 280px; min-width: 120px; padding: 6px 8px; pointer-events: none;
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius); font-size: 12px;
+  box-shadow: 0 2px 8px rgba(15, 18, 24, .14);
+}
+.tip-title { font-weight: 600; margin-bottom: 3px; overflow-wrap: anywhere; }
+.tip-row { display: flex; align-items: center; gap: 6px; }
+.tip-swatch { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+.tip-label { color: var(--text-2); flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tip-value { font-weight: 500; margin-left: 12px; }
+
+.chart-table { flex: 0 0 34%; min-height: 100px; overflow: auto; border-top: 1px solid var(--line); }
+.plain-table { border-collapse: separate; border-spacing: 0; font-size: 13px; min-width: 100%; }
+.plain-table th, .plain-table td { height: 24px; padding: 0 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; font-weight: 400; }
+.plain-table th:first-child { text-align: left; font-weight: 500; }
+.plain-table thead th { position: sticky; top: 0; background: var(--surface-3); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .pivot-panel, .chart-panel { overflow-y: auto; }
+  .pivot-result { min-height: 240px; }
+  .chart-canvas-holder { min-height: 260px; }
+  .chart-controls .field, .pivot-dims .field { flex: 1 1 130px; }
+  .chart-controls select, .pivot-dims select { max-width: 100%; width: 100%; }
+}
